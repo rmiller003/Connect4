@@ -39,9 +39,16 @@ def winning_move(board, piece):
                 return True
 
     # Check for positive sloped diagonals
-
+    for c in range(COLUMN_COUNT-3):
+        for r in range(ROW_COUNT-3):
+            if board[r][c] == piece and board[r+1][c+1] == piece and board[r+2][c+2] == piece and board[r+3][c+3] == piece:
+                return True
 
     # Check for negative sloped diagonals
+    for c in range(COLUMN_COUNT-3):
+        for r in range(3, ROW_COUNT):
+            if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
+                return True
 
 board = create_board()
 game_over = False
@@ -68,6 +75,10 @@ while not game_over:
         if is_valid_location(board, col):
             row = get_next_open_row(board, col)
             drop_piece(board, row, col, 2)
+
+        if winning_move(board, 2):
+            print("PLAYER 2 is the Winner!!!!! Congrats!!!")
+            game_over = True
 
     print_board(board)
 
