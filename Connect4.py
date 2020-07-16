@@ -1,9 +1,12 @@
 import numpy as np
 import pygame
 import sys
+import math
 
 BLUE = (0,0,255)
 BLACK = (0,0,0)
+RED = (255,0,0)
+YELLOW = (255,255,0)
 
 ROW_COUNT = 6
 COLUMN_COUNT = 7
@@ -68,6 +71,14 @@ def draw_board(board):
             pygame.draw.rect(screen, BLUE, (c*SQUARESIZE, r*SQUARESIZE+SQUARESIZE, SQUARESIZE, SQUARESIZE))
             pygame.draw.circle(screen, BLACK, (int(c*SQUARESIZE+SQUARESIZE/2), int(r*SQUARESIZE+SQUARESIZE+SQUARESIZE/2)), RADIUS)
 
+    for c in range(COLUMN_COUNT):
+        for r in range(ROW_COUNT):
+            if board[r][c] == 1:
+                pygame.draw.circle(screen, RED, (int(c*SQUARESIZE+SQUARESIZE/2), height-int(r*SQUARESIZE+SQUARESIZE/2)), RADIUS)
+            elif board[r][c] == 2:
+                pygame.draw.circle(screen, YELLOW, (int(c*SQUARESIZE+SQUARESIZE/2), height-int(r*SQUARESIZE+SQUARESIZE/2)), RADIUS)
+    pygame.display.update()
+
 
 board = create_board()
 game_over = False
@@ -78,9 +89,9 @@ pygame.init()
 SQUARESIZE = 100
 
 width = COLUMN_COUNT * SQUARESIZE
-hight = (ROW_COUNT+1) * SQUARESIZE
+height = (ROW_COUNT+1) * SQUARESIZE
 
-size = (width, hight)
+size = (width, height)
 
 RADIUS = int(SQUARESIZE/2 - 5)
 
@@ -88,6 +99,8 @@ screen = pygame.display.set_mode(size)
 draw_board(board)
 pygame.display.update()
 
+
+            # Game Loop
 while not game_over:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -97,7 +110,8 @@ while not game_over:
 
             # Ask for Player 1 Input
             if turn == 0:
-                col = int(input("Player 1 Make your Selection (0-6):"))
+                posx = event.pos[0]
+                col = int(math.floor(posx/SQUARESIZE))
 
                 if is_valid_location(board, col):
                     row = get_next_open_row(board, col)
@@ -110,7 +124,8 @@ while not game_over:
 
             # Ask for Player 2 Input
             else:
-                col = int(input("Player 2 Make your Selection (0-6):"))
+                posx = event.pos[0]
+                col = int(math.floor(posx/SQUARESIZE))
 
                 if is_valid_location(board, col):
                     row = get_next_open_row(board, col)
@@ -121,6 +136,7 @@ while not game_over:
                     game_over = True
 
             print_board(board)
+            draw_board(board)
 
             turn += 1
             turn = turn % 2
