@@ -230,9 +230,16 @@ turn = 0
 
 pygame.init()
 
+try:
+    pygame.mixer.init()
+    pygame.mixer.music.load('music.mp3')
+    pygame.mixer.music.play(-1)
+except pygame.error:
+    print("Mixer not available")
+
 turn_start_time = pygame.time.get_ticks()
 
-SQUARESIZE = 100
+SQUARESIZE = 120
 
 width = COLUMN_COUNT * SQUARESIZE
 height = (ROW_COUNT+1) * SQUARESIZE
