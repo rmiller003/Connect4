@@ -318,7 +318,9 @@ while not game_over:
 
         col = pick_best_move(board)
 
-        if is_valid_location(board, col):
+        if col is None:
+            game_over = True
+        elif is_valid_location(board, col):
             pygame.time.wait(500)
             row = get_next_open_row(board, col)
             drop_piece(board, row, col, 1)
