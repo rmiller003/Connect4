@@ -5,6 +5,15 @@ import math
 import random
 from datetime import datetime
 import pytz
+import os
+import sys
+
+def resource_path(relative_path):
+    """ Get absolute path to resource for PyInstaller """
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
+
 
 BLUE = (0,0,255)
 BLACK = (0,0,0)
@@ -266,12 +275,12 @@ pygame.init()
 
 try:
     pygame.mixer.init()
-    pygame.mixer.music.load('music.mp3')
+    pygame.mixer.music.load(resource_path('music.mp3'))
     pygame.mixer.music.play(-1)
-    sonar_ping_sound = pygame.mixer.Sound('sonar-ping.wav')
-    ping_sound = pygame.mixer.Sound('ping.wav')
-    win_sound = pygame.mixer.Sound('win.wav')
-    lose_sound = pygame.mixer.Sound('you-lose.wav')
+    sonar_ping_sound = pygame.mixer.Sound(resource_path('sonar-ping.wav'))
+    ping_sound = pygame.mixer.Sound(resource_path('ping.wav'))
+    win_sound = pygame.mixer.Sound(resource_path('win.wav'))
+    lose_sound = pygame.mixer.Sound(resource_path('you-lose.wav'))
 except pygame.error:
     print("Mixer not available")
     sonar_ping_sound = None
