@@ -21,7 +21,24 @@ def create_board():
     return board
 
 
-def drop_piece(board, row, col, piece):
+def drop_piece(board, row, col, piece, remaining_time=15, animate=False):
+    if animate:
+        pos_y = 0
+        speed = 10
+        color = RED if piece == 1 else YELLOW
+
+        target_y = height - int(row * SQUARESIZE + SQUARESIZE/2)
+
+        while pos_y < target_y:
+            pos_y += speed
+            if pos_y > target_y:
+                pos_y = target_y
+
+            draw_board(board, remaining_time, False) # Redraw board
+            pygame.draw.circle(screen, color, (int(col*SQUARESIZE+SQUARESIZE/2), int(pos_y)), RADIUS)
+            pygame.display.update()
+            pygame.time.Clock().tick(60)
+
     board[row][col] = piece
 
 
@@ -152,7 +169,7 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
         for col in valid_locations:
             row = get_next_open_row(board, col)
             b_copy = board.copy()
-            drop_piece(b_copy, row, col, AI_PIECE)
+            drop_piece(b_copy, row, col, AI_PIECE, 0, animate=False)
             new_score = minimax(b_copy, depth-1, alpha, beta, False)[1]
             if new_score > value:
                 value = new_score
@@ -168,7 +185,7 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
         for col in valid_locations:
             row = get_next_open_row(board, col)
             b_copy = board.copy()
-            drop_piece(b_copy, row, col, PLAYER_PIECE)
+            drop_piece(b_copy, row, col, PLAYER_PIECE, 0, animate=False)
             new_score = minimax(b_copy, depth-1, alpha, beta, True)[1]
             if new_score < value:
                 value = new_score
@@ -306,7 +323,7 @@ while running:
                     row = get_next_open_row(board, col)
                     if ping_sound:
                         ping_sound.play()
-                    drop_piece(board, row, col, 2)
+                    drop_piece(board, row, col, 2, remaining_time, True)
 
                     if winning_move(board, 2):
                         game_over = True
@@ -338,7 +355,7 @@ while running:
                 row = get_next_open_row(board, col)
                 if sonar_ping_sound:
                     sonar_ping_sound.play()
-                drop_piece(board, row, col, 1)
+                drop_piece(board, row, col, 1, remaining_time, True)
 
                 if winning_move(board, 1):
                     game_over = True
