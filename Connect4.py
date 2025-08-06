@@ -302,8 +302,6 @@ while not game_over:
                     drop_piece(board, row, col, 2)
 
                     if winning_move(board, 2):
-                        label = myfont.render("You Win!", 1, YELLOW)
-                        screen.blit(label, (40, 10))
                         game_over = True
 
                     print_board(board)
@@ -326,8 +324,6 @@ while not game_over:
             drop_piece(board, row, col, 1)
 
             if winning_move(board, 1):
-                label = myfont.render("You Lose!", 1, RED)
-                screen.blit(label, (40,10))
                 game_over = True
 
             print_board(board)
@@ -338,4 +334,11 @@ while not game_over:
             turn_start_time = pygame.time.get_ticks()
 
     if game_over:
+        if turn == 1: # AI won
+            label = myfont.render("You Lose!", 1, RED)
+            screen.blit(label, (40,10))
+        else: # Human won
+            label = myfont.render("You Win!", 1, YELLOW)
+            screen.blit(label, (40,10))
+        pygame.display.update()
         pygame.time.wait(5000)
