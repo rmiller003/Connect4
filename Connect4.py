@@ -181,7 +181,15 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
 def pick_best_move(board):
     return minimax(board, 5, -math.inf, math.inf, True)[0]
 
-def draw_board(board):
+def reset_game():
+    global board, game_over, turn, turn_start_time
+    board = create_board()
+    game_over = False
+    turn = random.randint(0, 1)
+    turn_start_time = pygame.time.get_ticks()
+
+def draw_board(board, remaining_time):
+    screen.fill(BLACK)
     for c in range(COLUMN_COUNT):
         for r in range(ROW_COUNT):
             pygame.draw.rect(screen, BLUE, (c*SQUARESIZE, r*SQUARESIZE+SQUARESIZE, SQUARESIZE, SQUARESIZE))
@@ -193,6 +201,26 @@ def draw_board(board):
                 pygame.draw.circle(screen, RED, (int(c*SQUARESIZE+SQUARESIZE/2), height-int(r*SQUARESIZE+SQUARESIZE/2)), RADIUS)
             elif board[r][c] == 2:
                 pygame.draw.circle(screen, YELLOW, (int(c*SQUARESIZE+SQUARESIZE/2), height-int(r*SQUARESIZE+SQUARESIZE/2)), RADIUS)
+
+    # Draw the restart button
+    RESTART_BUTTON_COLOR = (0, 255, 0)
+    RESTART_BUTTON_X = width - 150
+    RESTART_BUTTON_Y = 10
+    RESTART_BUTTON_WIDTH = 140
+    RESTART_BUTTON_HEIGHT = 40
+
+    pygame.draw.rect(screen, RESTART_BUTTON_COLOR, (RESTART_BUTTON_X, RESTART_BUTTON_Y, RESTART_BUTTON_WIDTH, RESTART_BUTTON_HEIGHT))
+    font = pygame.font.SysFont("monospace", 20)
+    label = font.render("Restart", 1, BLACK)
+    screen.blit(label, (RESTART_BUTTON_X + 30, RESTART_BUTTON_Y + 10))
+
+    # Draw the timer
+    TIMER_X = 10
+    TIMER_Y = 10
+    font = pygame.font.SysFont("monospace", 20)
+    label = font.render(f"Time: {int(remaining_time)}", 1, YELLOW)
+    screen.blit(label, (TIMER_X, TIMER_Y))
+
     pygame.display.update()
 
 
@@ -201,6 +229,8 @@ game_over = False
 turn = 0
 
 pygame.init()
+
+turn_start_time = pygame.time.get_ticks()
 
 SQUARESIZE = 100
 
@@ -212,7 +242,7 @@ size = (width, height)
 RADIUS = int(SQUARESIZE/2 - 5)
 
 screen = pygame.display.set_mode(size)
-draw_board(board)
+draw_board(board, 15)
 pygame.display.update()
 
 myfont = pygame.font.SysFont("monospace", 45)
@@ -220,6 +250,18 @@ myfont = pygame.font.SysFont("monospace", 45)
 
 # Game Loop
 while not game_over:
+
+    current_time = pygame.time.get_ticks()
+    elapsed_time = (current_time - turn_start_time) / 1000
+    remaining_time = 15 - elapsed_time
+
+    if remaining_time <= 0:
+        if turn == 1:  # Human player's turn
+            turn += 1
+            turn = turn % 2
+            turn_start_time = pygame.time.get_ticks()  # Reset timer for the next turn
+
+    draw_board(board, remaining_time)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -233,8 +275,19 @@ while not game_over:
         pygame.display.update()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if turn == 1:
-                posx = event.pos[0]
+            posx = event.pos[0]
+            posy = event.pos[1]
+
+            # Check if the restart button is clicked
+            RESTART_BUTTON_X = width - 150
+            RESTART_BUTTON_Y = 10
+            RESTART_BUTTON_WIDTH = 140
+            RESTART_BUTTON_HEIGHT = 40
+            if RESTART_BUTTON_X <= posx <= RESTART_BUTTON_X + RESTART_BUTTON_WIDTH and RESTART_BUTTON_Y <= posy <= RESTART_BUTTON_Y + RESTART_BUTTON_HEIGHT:
+                reset_game()
+                draw_board(board, 15) # Redraw the board after reset
+
+            elif turn == 1:
                 col = int(math.floor(posx / SQUARESIZE))
 
                 if is_valid_location(board, col):
@@ -247,10 +300,11 @@ while not game_over:
                         game_over = True
 
                     print_board(board)
-                    draw_board(board)
+                    draw_board(board, remaining_time)
 
                     turn += 1
                     turn = turn % 2
+                    turn_start_time = pygame.time.get_ticks()
 
     # AI Player 1 turn
     if turn == 0 and not game_over:
@@ -268,10 +322,11 @@ while not game_over:
                 game_over = True
 
             print_board(board)
-            draw_board(board)
+            draw_board(board, remaining_time)
 
             turn += 1
             turn = turn % 2
+            turn_start_time = pygame.time.get_ticks()
 
     if game_over:
         pygame.time.wait(5000)
