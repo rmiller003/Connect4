@@ -260,7 +260,7 @@ screen = pygame.display.set_mode(size)
 draw_board(board, 15)
 pygame.display.update()
 
-myfont = pygame.font.SysFont("monospace", 45)
+myfont = pygame.font.SysFont("monospace", 75)
 
 
 # Game Loop
@@ -350,11 +350,13 @@ while not game_over:
             if lose_sound:
                 lose_sound.play()
             label = myfont.render("You Lose!", 1, RED)
-            screen.blit(label, (40,10))
+            label_rect = label.get_rect(center=(width/2, SQUARESIZE/2))
+            screen.blit(label, label_rect)
         else: # Human won
             if win_sound:
                 win_sound.play()
             label = myfont.render("You Win!", 1, YELLOW)
-            screen.blit(label, (40,10))
+            label_rect = label.get_rect(center=(width/2, SQUARESIZE/2))
+            screen.blit(label, label_rect)
         pygame.display.update()
         pygame.time.wait(5000)
