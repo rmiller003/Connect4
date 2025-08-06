@@ -373,13 +373,13 @@ while running:
             if lose_sound:
                 lose_sound.play()
             label = myfont.render("You Lose!", 1, RED)
-            label_rect = label.get_rect(center=(width/2, height/2))
+            label_rect = label.get_rect(center=(width/2, SQUARESIZE/2 + 50))
             screen.blit(label, label_rect)
         else: # Human won
             if win_sound:
                 win_sound.play()
             label = myfont.render("You Win!", 1, YELLOW)
-            label_rect = label.get_rect(center=(width/2, height/2))
+            label_rect = label.get_rect(center=(width/2, SQUARESIZE/2 + 50))
             screen.blit(label, label_rect)
 
     pygame.display.update()
