@@ -3,6 +3,8 @@ import pygame
 import sys
 import math
 import random
+from datetime import datetime
+import pytz
 
 BLUE = (0,0,255)
 BLACK = (0,0,0)
@@ -34,7 +36,7 @@ def drop_piece(board, row, col, piece, remaining_time=15, animate=False):
             if pos_y > target_y:
                 pos_y = target_y
 
-            draw_board(board, remaining_time, False) # Redraw board
+            draw_board(board, remaining_time, False, "00:00:00") # Redraw board
             pygame.draw.circle(screen, color, (int(col*SQUARESIZE+SQUARESIZE/2), int(pos_y)), RADIUS)
             pygame.display.update()
             pygame.time.Clock().tick(60)
@@ -205,7 +207,7 @@ def reset_game():
     turn = 1
     turn_start_time = pygame.time.get_ticks()
 
-def draw_board(board, remaining_time, game_over):
+def draw_board(board, remaining_time, game_over, toronto_time):
     screen.fill(BLACK)
 
     # Draw the title
@@ -248,6 +250,11 @@ def draw_board(board, remaining_time, game_over):
     label = font.render(f"Time: {int(remaining_time)}", 1, YELLOW)
     screen.blit(label, (TIMER_X, TIMER_Y))
 
+    # Draw the time
+    font = pygame.font.SysFont("monospace", 20)
+    label = font.render(f"Toronto: {toronto_time}", 1, YELLOW)
+    screen.blit(label, (width - 250, 10))
+
     pygame.display.update()
 
 
@@ -284,7 +291,7 @@ size = (width, height)
 RADIUS = int(SQUARESIZE/2 - 5)
 
 screen = pygame.display.set_mode(size)
-draw_board(board, 15, game_over)
+draw_board(board, 15, game_over, "00:00:00")
 pygame.display.update()
 
 myfont = pygame.font.SysFont("monospace", 75)
@@ -366,7 +373,9 @@ while running:
                 turn = turn % 2
                 turn_start_time = pygame.time.get_ticks()
 
-    draw_board(board, remaining_time, game_over)
+    toronto_tz = pytz.timezone('America/Toronto')
+    toronto_time = datetime.now(toronto_tz).strftime("%H:%M:%S")
+    draw_board(board, remaining_time, game_over, toronto_time)
 
     if game_over:
         if turn == 1: # AI won
