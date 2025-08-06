@@ -185,7 +185,7 @@ def reset_game():
     global board, game_over, turn, turn_start_time
     board = create_board()
     game_over = False
-    turn = random.randint(0, 1)
+    turn = 1
     turn_start_time = pygame.time.get_ticks()
 
 def draw_board(board, remaining_time, game_over):
@@ -236,7 +236,7 @@ def draw_board(board, remaining_time, game_over):
 
 board = create_board()
 game_over = False
-turn = 0
+turn = 1
 
 pygame.init()
 
@@ -368,5 +368,24 @@ while not game_over:
             label = myfont.render("You Win!", 1, YELLOW)
             label_rect = label.get_rect(center=(width/2, height/2))
             screen.blit(label, label_rect)
+
+        draw_board(board, remaining_time, game_over)
         pygame.display.update()
-        pygame.time.wait(5000)
+
+        waiting_for_restart = True
+        while waiting_for_restart:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    waiting_for_restart = False
+                    game_over = False
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    posx = event.pos[0]
+                    posy = event.pos[1]
+                    RESTART_BUTTON_X = width/2 - 70
+                    RESTART_BUTTON_Y = height/2 + 50
+                    RESTART_BUTTON_WIDTH = 140
+                    RESTART_BUTTON_HEIGHT = 40
+                    if RESTART_BUTTON_X <= posx <= RESTART_BUTTON_X + RESTART_BUTTON_WIDTH and RESTART_BUTTON_Y <= posy <= RESTART_BUTTON_Y + RESTART_BUTTON_HEIGHT:
+                        reset_game()
+                        waiting_for_restart = False
