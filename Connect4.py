@@ -190,6 +190,13 @@ def reset_game():
 
 def draw_board(board, remaining_time):
     screen.fill(BLACK)
+
+    # Draw the title
+    title_font = pygame.font.SysFont("monospace", 80, bold=True)
+    title_label = title_font.render("CONNECT4", 1, YELLOW)
+    title_rect = title_label.get_rect(center=(width/2, SQUARESIZE/2 - 20))
+    screen.blit(title_label, title_rect)
+
     for c in range(COLUMN_COUNT):
         for r in range(ROW_COUNT):
             pygame.draw.rect(screen, BLUE, (c*SQUARESIZE, r*SQUARESIZE+SQUARESIZE, SQUARESIZE, SQUARESIZE))
@@ -350,13 +357,13 @@ while not game_over:
             if lose_sound:
                 lose_sound.play()
             label = myfont.render("You Lose!", 1, RED)
-            label_rect = label.get_rect(center=(width/2, SQUARESIZE/2))
+            label_rect = label.get_rect(center=(width/2, height/2))
             screen.blit(label, label_rect)
         else: # Human won
             if win_sound:
                 win_sound.play()
             label = myfont.render("You Win!", 1, YELLOW)
-            label_rect = label.get_rect(center=(width/2, SQUARESIZE/2))
+            label_rect = label.get_rect(center=(width/2, height/2))
             screen.blit(label, label_rect)
         pygame.display.update()
         pygame.time.wait(5000)
