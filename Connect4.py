@@ -188,7 +188,7 @@ def reset_game():
     turn = random.randint(0, 1)
     turn_start_time = pygame.time.get_ticks()
 
-def draw_board(board, remaining_time):
+def draw_board(board, remaining_time, game_over):
     screen.fill(BLACK)
 
     # Draw the title
@@ -209,17 +209,20 @@ def draw_board(board, remaining_time):
             elif board[r][c] == 2:
                 pygame.draw.circle(screen, YELLOW, (int(c*SQUARESIZE+SQUARESIZE/2), height-int(r*SQUARESIZE+SQUARESIZE/2)), RADIUS)
 
-    # Draw the restart button
-    RESTART_BUTTON_COLOR = (0, 255, 0)
-    RESTART_BUTTON_X = width - 150
-    RESTART_BUTTON_Y = 10
-    RESTART_BUTTON_WIDTH = 140
-    RESTART_BUTTON_HEIGHT = 40
+    if game_over:
+        # Draw the restart button
+        RESTART_BUTTON_COLOR = (0, 255, 0)
+        RESTART_BUTTON_BORDER_COLOR = (0, 100, 0)
+        RESTART_BUTTON_X = width/2 - 70
+        RESTART_BUTTON_Y = height/2 + 50
+        RESTART_BUTTON_WIDTH = 140
+        RESTART_BUTTON_HEIGHT = 40
 
-    pygame.draw.rect(screen, RESTART_BUTTON_COLOR, (RESTART_BUTTON_X, RESTART_BUTTON_Y, RESTART_BUTTON_WIDTH, RESTART_BUTTON_HEIGHT))
-    font = pygame.font.SysFont("monospace", 20)
-    label = font.render("Restart", 1, BLACK)
-    screen.blit(label, (RESTART_BUTTON_X + 30, RESTART_BUTTON_Y + 10))
+        pygame.draw.rect(screen, RESTART_BUTTON_BORDER_COLOR, (RESTART_BUTTON_X - 2, RESTART_BUTTON_Y - 2, RESTART_BUTTON_WIDTH + 4, RESTART_BUTTON_HEIGHT + 4))
+        pygame.draw.rect(screen, RESTART_BUTTON_COLOR, (RESTART_BUTTON_X, RESTART_BUTTON_Y, RESTART_BUTTON_WIDTH, RESTART_BUTTON_HEIGHT))
+        font = pygame.font.SysFont("monospace", 20)
+        label = font.render("Restart", 1, BLACK)
+        screen.blit(label, (RESTART_BUTTON_X + 30, RESTART_BUTTON_Y + 10))
 
     # Draw the timer
     TIMER_X = 10
@@ -264,7 +267,7 @@ size = (width, height)
 RADIUS = int(SQUARESIZE/2 - 5)
 
 screen = pygame.display.set_mode(size)
-draw_board(board, 15)
+draw_board(board, 15, game_over)
 pygame.display.update()
 
 myfont = pygame.font.SysFont("monospace", 75)
@@ -283,7 +286,7 @@ while not game_over:
             turn = turn % 2
             turn_start_time = pygame.time.get_ticks()  # Reset timer for the next turn
 
-    draw_board(board, remaining_time)
+    draw_board(board, remaining_time, game_over)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -301,15 +304,15 @@ while not game_over:
             posy = event.pos[1]
 
             # Check if the restart button is clicked
-            RESTART_BUTTON_X = width - 150
-            RESTART_BUTTON_Y = 10
-            RESTART_BUTTON_WIDTH = 140
-            RESTART_BUTTON_HEIGHT = 40
-            if RESTART_BUTTON_X <= posx <= RESTART_BUTTON_X + RESTART_BUTTON_WIDTH and RESTART_BUTTON_Y <= posy <= RESTART_BUTTON_Y + RESTART_BUTTON_HEIGHT:
-                reset_game()
-                draw_board(board, 15) # Redraw the board after reset
+            if game_over:
+                RESTART_BUTTON_X = width/2 - 70
+                RESTART_BUTTON_Y = height/2 + 50
+                RESTART_BUTTON_WIDTH = 140
+                RESTART_BUTTON_HEIGHT = 40
+                if RESTART_BUTTON_X <= posx <= RESTART_BUTTON_X + RESTART_BUTTON_WIDTH and RESTART_BUTTON_Y <= posy <= RESTART_BUTTON_Y + RESTART_BUTTON_HEIGHT:
+                    reset_game()
 
-            elif turn == 1:
+            if turn == 1 and not game_over:
                 col = int(math.floor(posx / SQUARESIZE))
 
                 if is_valid_location(board, col):
@@ -322,7 +325,7 @@ while not game_over:
                         game_over = True
 
                     print_board(board)
-                    draw_board(board, remaining_time)
+                    draw_board(board, remaining_time, game_over)
 
                     turn += 1
                     turn = turn % 2
@@ -346,7 +349,7 @@ while not game_over:
                 game_over = True
 
             print_board(board)
-            draw_board(board, remaining_time)
+            draw_board(board, remaining_time, game_over)
 
             turn += 1
             turn = turn % 2
