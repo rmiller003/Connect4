@@ -236,10 +236,14 @@ try:
     pygame.mixer.music.play(-1)
     sonar_ping_sound = pygame.mixer.Sound('sonar-ping.wav')
     ping_sound = pygame.mixer.Sound('ping.wav')
+    win_sound = pygame.mixer.Sound('win.wav')
+    lose_sound = pygame.mixer.Sound('you-lose.wav')
 except pygame.error:
     print("Mixer not available")
     sonar_ping_sound = None
     ping_sound = None
+    win_sound = None
+    lose_sound = None
 
 turn_start_time = pygame.time.get_ticks()
 
@@ -343,9 +347,13 @@ while not game_over:
 
     if game_over:
         if turn == 1: # AI won
+            if lose_sound:
+                lose_sound.play()
             label = myfont.render("You Lose!", 1, RED)
             screen.blit(label, (40,10))
         else: # Human won
+            if win_sound:
+                win_sound.play()
             label = myfont.render("You Win!", 1, YELLOW)
             screen.blit(label, (40,10))
         pygame.display.update()

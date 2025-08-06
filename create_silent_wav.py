@@ -14,4 +14,6 @@ def create_silent_wav(filename, duration=1, framerate=44100, channels=1, sampwid
 if __name__ == '__main__':
     create_silent_wav('sonar-ping.wav')
     create_silent_wav('ping.wav')
+    create_silent_wav('you-lose.wav')
+    create_silent_wav('win.wav')
     print("Silent WAV files created successfully.")
