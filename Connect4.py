@@ -252,8 +252,8 @@ def draw_board(board, remaining_time, game_over, toronto_time):
 
     # Draw the time
     font = pygame.font.SysFont("monospace", 20)
-    label = font.render(f"Toronto: {toronto_time}", 1, YELLOW)
-    screen.blit(label, (width - 250, 10))
+    label = font.render(f"{toronto_time}", 1, YELLOW)
+    screen.blit(label, (width - 200, 10))
 
     pygame.display.update()
 
@@ -374,7 +374,7 @@ while running:
                 turn_start_time = pygame.time.get_ticks()
 
     toronto_tz = pytz.timezone('America/Toronto')
-    toronto_time = datetime.now(toronto_tz).strftime("%H:%M:%S")
+    toronto_time = datetime.now(toronto_tz).strftime("%I:%M:%S %p")
     draw_board(board, remaining_time, game_over, toronto_time)
 
     if game_over:
