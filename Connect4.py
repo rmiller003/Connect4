@@ -234,8 +234,12 @@ try:
     pygame.mixer.init()
     pygame.mixer.music.load('music.mp3')
     pygame.mixer.music.play(-1)
+    sonar_ping_sound = pygame.mixer.Sound('sonar-ping.wav')
+    ping_sound = pygame.mixer.Sound('ping.wav')
 except pygame.error:
     print("Mixer not available")
+    sonar_ping_sound = None
+    ping_sound = None
 
 turn_start_time = pygame.time.get_ticks()
 
@@ -299,6 +303,8 @@ while not game_over:
 
                 if is_valid_location(board, col):
                     row = get_next_open_row(board, col)
+                    if ping_sound:
+                        ping_sound.play()
                     drop_piece(board, row, col, 2)
 
                     if winning_move(board, 2):
@@ -321,6 +327,8 @@ while not game_over:
         elif is_valid_location(board, col):
             pygame.time.wait(500)
             row = get_next_open_row(board, col)
+            if sonar_ping_sound:
+                sonar_ping_sound.play()
             drop_piece(board, row, col, 1)
 
             if winning_move(board, 1):
